@@ -8,7 +8,7 @@ API REST de tareas (To-Do) en **Node.js + Express**. Pasa por un flujo DevSecOps
 
 | Pedido de la tarea | Dónde está en este proyecto |
 |--------------------|-----------------------------|
-| URL del repositorio | https://github.com/mmazariegos-2021338/todo-api *(crear el repo público y hacer push; yo no tengo sesión de GitHub)* |
+| URL del repositorio | https://github.com/mmazariegos-2021338/todo-api |
 | README (local + Docker) | Secciones 2 y 3 |
 | Dockerfile y `.dockerignore` | Raíz del proyecto |
 | Evidencia Sonar (captura o enlace + resultado) | Sección 4 y [`docs/sonar-evidencia.md`](docs/sonar-evidencia.md). Proyecto: **todo-api**. Bugs 0, vulns 0, smells 0, cobertura 80.6% |
