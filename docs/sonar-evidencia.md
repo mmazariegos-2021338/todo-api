@@ -8,6 +8,16 @@ Tarea 4 (Trivy, Sonar, Docker). La consigna pide captura o enlace del análisis 
 - Scanner: `sonarsource/sonar-scanner-cli` 8.0.1
 - Dashboard (cuando Sonar está arriba): `http://127.0.0.1:9000/dashboard?id=todo-api`
 
+## Capturas (2026-09-08)
+
+Overview del proyecto **todo-api** (111 ncloc, versión 1.0, Security A, Reliability 0 issues, Coverage 80.6%):
+
+![Dashboard SonarQube todo-api](sonar-dashboard.png)
+
+Pestaña Issues: **No Issues. Hooray!** (Security 0, Reliability 0, Maintainability 0):
+
+![Issues SonarQube todo-api](sonar-issues.png)
+
 Consulta `GET /api/measures/component?component=todo-api&metricKeys=bugs,vulnerabilities,code_smells,coverage,ncloc,security_hotspots`:
 
 ```json
