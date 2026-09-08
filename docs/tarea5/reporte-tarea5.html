@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<title>Tarea 5 — Pruebas funcionales y de carga (todo-api)</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 880px; margin: 32px auto; color: #1a1a1a; line-height: 1.45; }
+  h1,h2,h3 { font-family: Helvetica, Arial, sans-serif; }
+  h1 { font-size: 22px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; margin: 12px 0 20px; }
+  th, td { border: 1px solid #bbb; padding: 6px 8px; text-align: left; }
+  th { background: #eee; }
+  code, pre { font-family: Menlo, monospace; font-size: 12px; }
+  pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+  .tree { font-family: Menlo, monospace; font-size: 12px; background: #f7f7f7; padding: 12px; }
+  .ok { color: #0a7a2f; font-weight: 600; }
+  .note { color: #444; font-size: 13px; }
+</style>
+</head>
+<body>
+<h1>Tarea Unidad V — Pruebas funcionales y de carga</h1>
+<p><strong>Proyecto:</strong> todo-api (Node.js/Express) &nbsp;|&nbsp; <strong>Base URL:</strong> http://localhost:8080 (sin prefijo <code>/api</code>) &nbsp;|&nbsp; <strong>Fecha:</strong> 2026-09-08 &nbsp;|&nbsp; <strong>JMeter:</strong> 5.6.3</p>
+
+<h2>1. Contrato real de la API</h2>
+<table>
+<tr><th>Caso</th><th>Método</th><th>Ruta</th><th>Esperado (esta API)</th></tr>
+<tr><td>F01</td><td>POST</td><td>/tasks</td><td>201 + JSON con id y title</td></tr>
+<tr><td>F02</td><td>GET</td><td>/tasks/{id}</td><td>200 + mismo id</td></tr>
+<tr><td>F03</td><td>PUT</td><td>/tasks/{id}</td><td>200 + completed=true</td></tr>
+<tr><td>F04</td><td>GET</td><td>/tasks</td><td>200 + lista JSON</td></tr>
+<tr><td>F05</td><td>DELETE</td><td>/tasks/{id}</td><td>204 (sin cuerpo)</td></tr>
+<tr><td>F06</td><td>GET</td><td>/tasks/999999</td><td>404 + error controlado</td></tr>
+<tr><td>F07</td><td>POST</td><td>/tasks (sin title)</td><td>400 + title obligatorio</td></tr>
+</table>
+<p class="note">La consigna muestra ejemplos 200/201 y /api. Se adaptó al código real: no hay /api, POST crea con 201, DELETE es 204, no existe PATCH.</p>
+
+<h2>2. Estructura del Test Plan</h2>
+<pre class="tree">todo-api funcional
+├── HTTP Request Defaults   host=localhost  port=8080  protocol=http
+├── HTTP Header Manager     Content-Type: application/json
+├── CSV Data Set            tareas.csv → ${titulo}, ${descripcion}, ${completada}
+└── TG Funcional CRUD (1 hilo, 1 loop)
+    ├── F01 POST Crear          → JSON Extractor $.id → ${taskId}
+    ├── F02 GET /tasks/${taskId}
+    ├── F03 PUT /tasks/${taskId}
+    ├── F04 GET /tasks
+    ├── F05 DELETE /tasks/${taskId}
+    ├── F06 GET /tasks/999999
+    ├── F07 POST payload inválido
+    ├── View Results Tree
+    └── Summary Report
+
+todo-api carga
+├── mismos Defaults + Header + CSV
+└── TG Carga (threads/rampup/duration por -J)
+    ├── C01 POST Crear + extraer id
+    ├── C02 GET por id
+    ├── C03 PUT completed=true
+    ├── C04 GET Listar
+    ├── Summary Report
+    └── Aggregate Report
+</pre>
+<p>Archivos: <code>jmeter/todo-api-funcional.jmx</code>, <code>jmeter/todo-api-carga.jmx</code>, <code>jmeter/tareas.csv</code>.</p>
+
+<h2>3. Prueba funcional (1 usuario, 1 iteración)</h2>
+<p class="ok">7/7 samples OK. Error 0.00%.</p>
+<table>
+<tr><th>Label</th><th>Code</th><th>Success</th><th>Elapsed (ms)</th></tr>
+<tr><td>F01 POST Crear tarea</td><td>201</td><td>true</td><td>10</td></tr>
+<tr><td>F02 GET Tarea creada</td><td>200</td><td>true</td><td>0</td></tr>
+<tr><td>F03 PUT Actualizar tarea</td><td>200</td><td>true</td><td>0</td></tr>
+<tr><td>F04 GET Listar tareas</td><td>200</td><td>true</td><td>0</td></tr>
+<tr><td>F05 DELETE Eliminar tarea</td><td>204</td><td>true</td><td>1</td></tr>
+<tr><td>F06 GET ID inexistente</td><td>404</td><td>true</td><td>0</td></tr>
+<tr><td>F07 POST payload invalido</td><td>400</td><td>true</td><td>0</td></tr>
+</table>
+<p>Aserciones: código HTTP, existencia de <code>$.id</code>, <code>title</code> del CSV, <code>completed=true</code> tras PUT, mensaje de error en F06/F07. El ID se reutiliza con JSON Extractor.</p>
+
+<h2>4. Escenarios de carga (justificación)</h2>
+<p>Se usaron los valores de referencia de la consigna (equipo local, API en memoria, no se buscó saturar). Entre escenarios se reinició el proceso para no mezclar el crecimiento del store con el efecto de la concurrencia.</p>
+<table>
+<tr><th>Escenario</th><th>Usuarios</th><th>Ramp-up</th><th>Duración</th></tr>
+<tr><td>Ligera</td><td>5</td><td>10 s</td><td>90 s</td></tr>
+<tr><td>Media</td><td>20</td><td>20 s</td><td>120 s</td></tr>
+<tr><td>Alta</td><td>50</td><td>30 s</td><td>120 s</td></tr>
+</table>
+<p>En carga no se hace DELETE: evite 404 por carrera entre hilos. Criterio funcional en carga: HTTP 201/200 + JSON con id + completed=true.</p>
+
+<h2>5. Métricas (JTL reales, 2026-09-08)</h2>
+<p>Tiempos en milisegundos. Throughput = samples / ventana del JTL.</p>
+<table>
+<tr><th>Escenario</th><th>Samples</th><th>Avg</th><th>Mediana</th><th>p90</th><th>p95</th><th>Min</th><th>Max</th><th>Error %</th><th>Throughput</th></tr>
+<tr><td>Ligera (5)</td><td>80756</td><td>5.30</td><td>4</td><td>13</td><td>16</td><td>0</td><td>60</td><td>0.000</td><td>897.8/s</td></tr>
+<tr><td>Media (20)</td><td>93380</td><td>23.65</td><td>19</td><td>53</td><td>67</td><td>0</td><td>420</td><td>0.000</td><td>778.6/s</td></tr>
+<tr><td>Alta (50)</td><td>93498</td><td>56.31</td><td>52</td><td>120</td><td>141</td><td>0</td><td>676</td><td>0.000</td><td>779.6/s</td></tr>
+</table>
+<h3>Endpoint más lento por escenario (avg)</h3>
+<table>
+<tr><th>Escenario</th><th>C01 POST</th><th>C02 GET id</th><th>C03 PUT</th><th>C04 GET Listar</th></tr>
+<tr><td>Ligera avg / p95</td><td>6.1 / 16</td><td>4.3 / 14</td><td>3.6 / 13</td><td><strong>7.2 / 17</strong></td></tr>
+<tr><td>Media avg / p95</td><td>24.7 / 69</td><td>21.8 / 64</td><td>20.7 / 60</td><td><strong>27.5 / 70</strong></td></tr>
+<tr><td>Alta avg / p95</td><td>56.3 / 145</td><td>54.9 / 138</td><td>54.0 / 136</td><td><strong>60.1 / 146</strong></td></tr>
+</table>
+<p class="ok">Criterio académico: error &lt; 1% y p95 &lt; 1000 ms. Se cumple en los tres escenarios (p95 máximo 141 ms, errores 0%).</p>
+
+<h2>6. Análisis (solo lo que muestran las métricas)</h2>
+<ol>
+<li><strong>Mayor tiempo:</strong> C04 GET Listar en los tres escenarios. Es coherente con la implementación: serializa <em>todas</em> las tareas del Map en cada GET /tasks. Durante cada corrida el store crece (miles de POST), y el avg de Listar sube dentro del mismo escenario (p. ej. ligera: throughput de 1714/s al inicio a 474/s al final).</li>
+<li><strong>Degradación por concurrencia:</strong> avg total 5.3 → 23.7 → 56.3 ms al pasar de 5 a 20 a 50 hilos. El p95 16 → 67 → 141 ms. No hay umbral de “rotura”; hay aumento gradual. Entre 5 y 20 se nota más el salto relativo.</li>
+<li><strong>Errores:</strong> 0% en los tres niveles. El porcentaje <em>no</em> aumenta con la carga en este experimento.</li>
+<li><strong>Funcional vs carga:</strong> funcional valida el contrato (códigos y cuerpo) con 1 usuario. Carga mide tiempos/throughput con muchos hilos; las aserciones evitan contar 200 “vacíos” como éxito.</li>
+<li>No se afirma cuello de botella de CPU/red: no se midió. Lo observado es latencia que crece con hilos y con el tamaño de la lista.</li>
+</ol>
+
+<h2>7. Uso de IA (prompts y criterio humano)</h2>
+<table>
+<tr><th>#</th><th>Prompt (adaptado)</th><th>Qué se aceptó</th><th>Qué se cambió o descartó</th></tr>
+<tr><td>1</td><td>Casos positivos/negativos/borde para JMeter</td><td>F01–F07 y aserciones de código + JSON</td><td>No usar /api. POST=201 no 200. DELETE=204. PUT, no PATCH.</td></tr>
+<tr><td>2</td><td>10 filas CSV titulo,descripcion,completed</td><td>Archivo tareas.csv con 10 filas</td><td>Se alineó al contrato: completed no se envía en POST (la API lo ignora al crear).</td></tr>
+<tr><td>3</td><td>Extraer $.id y reusar en GET/PUT/DELETE</td><td>JSON Extractor → ${taskId}</td><td>—</td></tr>
+<tr><td>4</td><td>Escenario académico de carga</td><td>5/20/50, ramp 10/20/30, 90–120 s</td><td>Sin DELETE en carga (evita 404 por carrera). Reinicio del proceso entre escenarios.</td></tr>
+<tr><td>5</td><td>Interpretar métricas sin inventar causas</td><td>Comparar avg/p95/error/throughput</td><td>No se atribuyó el max 676 ms a “GC” ni a red: no hay evidencia. Solo se afirma que Listar es el más lento y que la lista crece.</td></tr>
+</table>
+
+<h2>8. Preguntas de la consigna</h2>
+<p><strong>11. Endpoint más lento:</strong> GET /tasks (C04). Relevante porque el listado es O(n) sobre el store y se llama en cada iteración de carga.</p>
+<p><strong>12. Concurrencia y degradación:</strong> ya entre 5 y 20 usuarios el avg pasa de ~5 ms a ~24 ms. A 50 usuarios ~56 ms. Sigue &lt; 1 s.</p>
+<p><strong>13. ¿Errores con la carga?</strong> No. 0% en ligera, media y alta.</p>
+<p><strong>14. Funcional vs carga:</strong> funcional = ¿cumple el contrato? Carga = ¿cómo se comporta el tiempo/throughput al subir hilos?</p>
+<p><strong>15. IA vs humano:</strong> la IA propuso /api y códigos genéricos. El humano los contrastó con app.js.</p>
+<p><strong>16. Segunda iteración:</strong> paginar GET /tasks; proteger nextId ante concurrencia (hoy ++ no es atómico, aunque en esta corrida no se vieron errores); guardar JTL fuera del repo (son 9–11 MB).</p>
+
+<h2>9. Cómo reproducir</h2>
+<pre>npm start
+# otra terminal:
+cd jmeter
+jmeter -n -t todo-api-funcional.jmx -l ../results/funcional/funcional.jtl
+jmeter -n -t todo-api-carga.jmx -l ../results/carga-ligera/carga.jtl -Jthreads=5 -Jrampup=10 -Jduration=90
+</pre>
+<p>Abrir los .jmx en JMeter GUI para ver el árbol, View Results Tree y Aggregate Report.</p>
+</body>
+</html>

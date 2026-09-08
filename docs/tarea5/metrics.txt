@@ -1,0 +1,31 @@
+
+## funcional (/Users/growthddr/Downloads/todo-api/results/funcional/funcional.jtl)
+F01 POST Crear tarea: n=1 avg=10.00 med=10.0 p90=10.0 p95=10.0 min=10 max=10 err=0.000% tps=1000.0
+F02 GET Tarea creada: n=1 avg=0.00 med=0.0 p90=0.0 p95=0.0 min=0 max=0 err=0.000% tps=1000.0
+F03 PUT Actualizar tarea: n=1 avg=0.00 med=0.0 p90=0.0 p95=0.0 min=0 max=0 err=0.000% tps=1000.0
+F04 GET Listar tareas: n=1 avg=0.00 med=0.0 p90=0.0 p95=0.0 min=0 max=0 err=0.000% tps=1000.0
+F05 DELETE Eliminar tarea: n=1 avg=1.00 med=1.0 p90=1.0 p95=1.0 min=1 max=1 err=0.000% tps=1000.0
+F06 GET ID inexistente: n=1 avg=0.00 med=0.0 p90=0.0 p95=0.0 min=0 max=0 err=0.000% tps=1000.0
+F07 POST payload invalido: n=1 avg=0.00 med=0.0 p90=0.0 p95=0.0 min=0 max=0 err=0.000% tps=1000.0
+TOTAL: n=7 avg=1.57 med=0.0 p90=4.6 p95=7.3 min=0 max=10 err=0.000% tps=280.0
+
+## ligera (/Users/growthddr/Downloads/todo-api/results/carga-ligera/carga.jtl)
+C01 POST Crear: n=20191 avg=6.08 med=5.0 p90=14.0 p95=16.0 min=0 max=41 err=0.000% tps=224.5
+C02 GET por id: n=20189 avg=4.26 med=3.0 p90=11.0 p95=14.0 min=0 max=41 err=0.000% tps=224.5
+C03 PUT Actualizar: n=20188 avg=3.63 med=2.0 p90=9.0 p95=13.0 min=0 max=41 err=0.000% tps=224.5
+C04 GET Listar: n=20188 avg=7.23 med=6.0 p90=15.0 p95=17.0 min=0 max=60 err=0.000% tps=224.5
+TOTAL: n=80756 avg=5.30 med=4.0 p90=13.0 p95=16.0 min=0 max=60 err=0.000% tps=897.8
+
+## media (/Users/growthddr/Downloads/todo-api/results/carga-media/carga.jtl)
+C01 POST Crear: n=23353 avg=24.66 med=20.0 p90=56.0 p95=69.0 min=0 max=420 err=0.000% tps=194.7
+C02 GET por id: n=23346 avg=21.75 med=16.0 p90=50.0 p95=64.0 min=0 max=175 err=0.000% tps=194.7
+C03 PUT Actualizar: n=23342 avg=20.73 med=16.0 p90=48.0 p95=60.0 min=0 max=396 err=0.000% tps=194.7
+C04 GET Listar: n=23339 avg=27.47 med=24.0 p90=58.0 p95=70.0 min=0 max=397 err=0.000% tps=194.7
+TOTAL: n=93380 avg=23.65 med=19.0 p90=53.0 p95=67.0 min=0 max=420 err=0.000% tps=778.6
+
+## alta (/Users/growthddr/Downloads/todo-api/results/carga-alta/carga.jtl)
+C01 POST Crear: n=23396 avg=56.25 med=52.0 p90=120.0 p95=145.0 min=0 max=370 err=0.000% tps=195.1
+C02 GET por id: n=23375 avg=54.86 med=51.0 p90=117.0 p95=138.0 min=0 max=332 err=0.000% tps=194.9
+C03 PUT Actualizar: n=23368 avg=54.00 med=51.0 p90=117.0 p95=136.0 min=0 max=313 err=0.000% tps=194.9
+C04 GET Listar: n=23359 avg=60.13 med=57.0 p90=124.0 p95=146.0 min=0 max=676 err=0.000% tps=194.8
+TOTAL: n=93498 avg=56.31 med=52.0 p90=120.0 p95=141.0 min=0 max=676 err=0.000% tps=779.6

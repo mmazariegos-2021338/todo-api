@@ -1,0 +1,11 @@
+titulo,descripcion,completada
+Comprar viveres,Actividad de prueba,false
+Preparar reporte,Caso generado para JMeter,false
+Revisar pendientes,Prueba automatizada,true
+Estudiar JMeter,Repaso de aserciones,false
+Documentar evidencias,Capturas del Test Plan,false
+Actualizar README,Seccion de la Tarea 5,false
+Probar payload invalido,Sin titulo no debe pasar,false
+Cargar escenario ligero,5 usuarios concurrentes,false
+Cargar escenario medio,20 usuarios concurrentes,false
+Cargar escenario alto,50 usuarios concurrentes,true

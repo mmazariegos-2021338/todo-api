@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"/><title>F06/F07 negativos</title>
+<style>body{font-family:Helvetica,Arial,sans-serif;margin:32px}table{border-collapse:collapse}td,th{border:1px solid #333;padding:8px}th{background:#eee}.ok{color:#0a7a2f}</style>
+</head><body>
+<h1>Ejecución negativa / validación de error</h1>
+<p>JMeter CLI — todo-api-funcional.jmx — 2026-09-08 — <span class="ok">success=true</span> (el 404/400 son el contrato esperado)</p>
+<table>
+<tr><th>Caso</th><th>Request</th><th>HTTP</th><th>Assertion</th><th>Cuerpo</th></tr>
+<tr><td>F06</td><td>GET /tasks/999999</td><td>404</td><td>código 404 + $.error = Tarea no encontrada</td><td>{"error":"Tarea no encontrada"}</td></tr>
+<tr><td>F07</td><td>POST /tasks {"description":"sin titulo"}</td><td>400</td><td>código 400 + title obligatorio</td><td>{"error":"El campo \"title\" es obligatorio"}</td></tr>
+</table>
+</body></html>

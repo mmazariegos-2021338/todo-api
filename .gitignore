@@ -3,3 +3,5 @@ coverage/
 .sonar/
 *.log
 .DS_Store
+results/**/*.jtl
+results/**/html/

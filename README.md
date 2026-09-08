@@ -234,7 +234,31 @@ Se usó Claude como copiloto para diseñar la estructura del proyecto, generar e
 
 SonarQube Community (26.8) no encontró bugs, vulnerabilidades ni code smells en los 111 ncloc; la cobertura quedó en 80.6%. No había issues reales que corregir en `src/`, y forzar cambios solo para “cumplir dos hallazgos” habría sido inventar evidencia. Trivy sí encontró problemas, todos heredados: 2 HIGH de openssl en Alpine (`CVE-2026-14456`, 3.5.7-r0) y 1 CRITICAL + 10 HIGH en el npm/yarn que trae `node:22-alpine`, no en Express. Un `docker pull` de la misma etiqueta no bastó (mismo digest); el parche fácil fue `apk upgrade` (openssl 3.5.8-r0) y quitar npm/yarn del runtime, porque el `CMD` solo corre `node`. El rescan quedó en 0 CRITICAL y 0 HIGH. En la práctica también falló levantar Sonar en Colima con 2 GiB (ElasticSearch exit 137) y `host.docker.internal` no alcanzó al contenedor: hizo falta 6 GiB y analizar por la red de Compose. Eso confirma que el flujo DevSecOps no es solo “pasar tests”: hay que medir, distinguir hallazgo de la app vs. de la imagen, y documentar lo que no aplica.
 
-## 9. Estructura del proyecto
+## 9. Tarea 5 — Pruebas funcionales y de carga (JMeter)
+
+Base URL real: `http://localhost:8080` (no hay `/api`). JMeter 5.6.3.
+
+| Entregable | Ubicación |
+|------------|-----------|
+| Plan funcional F01–F07 | [`jmeter/todo-api-funcional.jmx`](jmeter/todo-api-funcional.jmx) |
+| Plan de carga | [`jmeter/todo-api-carga.jmx`](jmeter/todo-api-carga.jmx) |
+| CSV | [`jmeter/tareas.csv`](jmeter/tareas.csv) |
+| Reporte PDF | [`docs/tarea5/reporte-tarea5.pdf`](docs/tarea5/reporte-tarea5.pdf) |
+| Captura Test Plan + funcional | [`docs/tarea5/captura-test-plan-y-funcional.png`](docs/tarea5/captura-test-plan-y-funcional.png) |
+| Captura negativa F06/F07 | [`docs/tarea5/captura-negativa.png`](docs/tarea5/captura-negativa.png) |
+| Aggregate/dashboard ligera/media/alta | `docs/tarea5/captura-carga-*.png` |
+| Métricas extraídas del JTL | [`docs/tarea5/metrics.txt`](docs/tarea5/metrics.txt) |
+
+```bash
+npm start
+cd jmeter
+jmeter -n -t todo-api-funcional.jmx -l ../results/funcional/funcional.jtl
+jmeter -n -t todo-api-carga.jmx -l ../results/carga-ligera/carga.jtl -Jthreads=5 -Jrampup=10 -Jduration=90
+```
+
+Resultado 2026-09-08: funcional **7/7, 0% error**. Carga 5/20/50 usuarios: **0% error**, p95 **16 / 67 / 141 ms** (criterio &lt; 1 s). GET `/tasks` es el más lento. Detalle y prompts de IA en el PDF.
+
+## 10. Estructura del proyecto
 
 ```
 todo-api/
@@ -254,5 +278,10 @@ todo-api/
 ├── docs/sonar-dashboard.png
 ├── docs/sonar-issues.png
 ├── trivy-report-before.txt
-└── trivy-report-after.txt
+├── trivy-report-after.txt
+├── jmeter/
+│   ├── todo-api-funcional.jmx
+│   ├── todo-api-carga.jmx
+│   └── tareas.csv
+└── docs/tarea5/          # PDF, capturas y métricas de JMeter
 ```
