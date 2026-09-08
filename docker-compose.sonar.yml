@@ -1,0 +1,27 @@
+# SonarQube Community Edition, solo para uso local/evaluación (usa la base de
+# datos embebida H2, no apta para producción, pero perfecta para esta tarea).
+#
+# Uso:
+#   docker compose -f docker-compose.sonar.yml up -d
+#   Abrir http://localhost:9000  (usuario: admin / clave: admin -> pedirá cambiarla)
+#
+# Para detenerlo:
+#   docker compose -f docker-compose.sonar.yml down
+version: "3.8"
+services:
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube-todo-api
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+
+volumes:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:
