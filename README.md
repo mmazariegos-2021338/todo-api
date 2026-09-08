@@ -11,7 +11,7 @@ API REST de tareas (To-Do) en **Node.js + Express**. Pasa por un flujo DevSecOps
 | URL del repositorio | https://github.com/mmazariegos-2021338/todo-api |
 | README (local + Docker) | Secciones 2 y 3 |
 | Dockerfile y `.dockerignore` | Raíz del proyecto |
-| Evidencia Sonar (captura o enlace + resultado) | [`docs/sonar-evidencia.md`](docs/sonar-evidencia.md), [`docs/sonar-dashboard.png`](docs/sonar-dashboard.png), [`docs/sonar-issues.png`](docs/sonar-issues.png). Proyecto **todo-api**: 0 issues, cobertura 80.6% |
+| Evidencia Sonar (captura o enlace + resultado) | [`docs/sonar-evidencia.md`](docs/sonar-evidencia.md): [proyectos](docs/sonar-projects.png), [dashboard](docs/sonar-dashboard.png), [issues](docs/sonar-issues.png). Quality Gate Passed, 0 issues, cobertura 80.6% |
 | Evidencia Trivy | Sección 5, `trivy-report-before.txt`, `trivy-report-after.txt` |
 | Docker Hub + etiqueta de versión | https://hub.docker.com/r/devmar17/todo-api — tag **`1.0`** |
 | 3 a 5 prompts de IA y qué aportaron | Sección 7 |
@@ -160,7 +160,7 @@ Dashboard local: `http://127.0.0.1:9000/dashboard?id=todo-api` (tras el análisi
 - Security hotspots: **0**
 - Cobertura reportada por Sonar: **80.6%** (111 ncloc)
 - Hallazgos corregidos: **ninguno**. El Quality Profile "Sonar way" no reportó issues en `src/`. No se inventaron correcciones de código.
-- Capturas: [dashboard](docs/sonar-dashboard.png) e [Issues vacías](docs/sonar-issues.png).
+- Capturas: [lista de proyectos](docs/sonar-projects.png), [dashboard](docs/sonar-dashboard.png) e [Issues vacías](docs/sonar-issues.png).
 
 Para detener SonarQube cuando termines:
 
@@ -250,6 +250,7 @@ todo-api/
 ├── package.json
 ├── README.md
 ├── docs/sonar-evidencia.md
+├── docs/sonar-projects.png
 ├── docs/sonar-dashboard.png
 ├── docs/sonar-issues.png
 ├── trivy-report-before.txt

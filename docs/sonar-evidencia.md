@@ -10,6 +10,10 @@ Tarea 4 (Trivy, Sonar, Docker). La consigna pide captura o enlace del análisis 
 
 ## Capturas (2026-09-08)
 
+Lista de proyectos: **todo-api**, JavaScript, 111 ncloc, Quality Gate **Passed**, ratings A:
+
+![Proyectos SonarQube todo-api](sonar-projects.png)
+
 Overview del proyecto **todo-api** (111 ncloc, versión 1.0, Security A, Reliability 0 issues, Coverage 80.6%):
 
 ![Dashboard SonarQube todo-api](sonar-dashboard.png)
