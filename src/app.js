@@ -1,27 +1,40 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const TaskStore = require('./taskStore');
+const { normalizeStatus } = TaskStore;
 
-/**
- * Crea la aplicación Express. Se exporta como función (en lugar de una instancia
- * ya creada) para poder inyectar un TaskStore distinto en las pruebas.
- */
 function createApp(store = new TaskStore()) {
   const app = express();
+  const publicDir = path.join(__dirname, '..', 'public');
   app.use(express.json());
+  app.use(express.static(publicDir));
 
-  // Endpoint de salud, útil para verificar que el contenedor arrancó bien.
   app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'ok' });
+    res.status(200).json({
+      status: 'ok',
+      version: process.env.APP_VERSION || '1.0',
+    });
   });
 
-  // Listar todas las tareas.
+  app.get('/tasks/stats', (req, res) => {
+    res.status(200).json(store.stats());
+  });
+
   app.get('/tasks', (req, res) => {
-    res.status(200).json(store.getAll());
+    const statusFilter = req.query.status
+      ? normalizeStatus(String(req.query.status))
+      : undefined;
+
+    if (req.query.status && statusFilter === null) {
+      return res.status(400).json({ error: 'Estado inválido. Use PENDIENTE, EN PROGRESO o COMPLETADA' });
+    }
+
+    return res.status(200).json(store.getAll(statusFilter));
   });
 
-  // Obtener una tarea por id.
   app.get('/tasks/:id', (req, res) => {
     const id = Number(req.params.id);
     const task = store.getById(id);
@@ -33,27 +46,40 @@ function createApp(store = new TaskStore()) {
     return res.status(200).json(task);
   });
 
-  // Crear una tarea nueva.
   app.post('/tasks', (req, res) => {
-    const { title, description } = req.body || {};
+    const { title, description, status } = req.body || {};
 
     if (!title || typeof title !== 'string' || title.trim().length === 0) {
       return res.status(400).json({ error: 'El campo "title" es obligatorio' });
     }
 
-    const task = store.create({ title: title.trim(), description });
+    const normalized = normalizeStatus(status);
+    if (status !== undefined && status !== '' && normalized === null) {
+      return res.status(400).json({ error: 'Estado inválido. Use PENDIENTE, EN PROGRESO o COMPLETADA' });
+    }
+
+    const task = store.create({
+      title: title.trim(),
+      description,
+      status: normalized,
+    });
     return res.status(201).json(task);
   });
 
-  // Actualizar una tarea existente (título, descripción y/o estado completado).
   app.put('/tasks/:id', (req, res) => {
     const id = Number(req.params.id);
-    const { title, description, completed } = req.body || {};
+    const { title, description, status } = req.body || {};
 
     const changes = {};
     if (title !== undefined) changes.title = title;
     if (description !== undefined) changes.description = description;
-    if (completed !== undefined) changes.completed = Boolean(completed);
+    if (status !== undefined) {
+      const normalized = normalizeStatus(status);
+      if (normalized === null) {
+        return res.status(400).json({ error: 'Estado inválido. Use PENDIENTE, EN PROGRESO o COMPLETADA' });
+      }
+      changes.status = normalized;
+    }
 
     const updated = store.update(id, changes);
 
@@ -64,7 +90,6 @@ function createApp(store = new TaskStore()) {
     return res.status(200).json(updated);
   });
 
-  // Eliminar una tarea.
   app.delete('/tasks/:id', (req, res) => {
     const id = Number(req.params.id);
     const deleted = store.remove(id);
@@ -76,9 +101,12 @@ function createApp(store = new TaskStore()) {
     return res.status(204).send();
   });
 
-  // Manejador de rutas no encontradas.
   app.use((req, res) => {
-    res.status(404).json({ error: 'Ruta no encontrada' });
+    const indexFile = path.join(publicDir, 'index.html');
+    if (req.method === 'GET' && !req.path.startsWith('/tasks') && fs.existsSync(indexFile)) {
+      return res.sendFile(indexFile);
+    }
+    return res.status(404).json({ error: 'Ruta no encontrada' });
   });
 
   return app;

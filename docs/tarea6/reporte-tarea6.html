@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<title>Tarea 6 — Implementación de software (todo-api)</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 32px auto; color: #1a1a1a; line-height: 1.45; }
+  h1,h2,h3 { font-family: Helvetica, Arial, sans-serif; }
+  h1 { font-size: 22px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; margin: 12px 0 20px; }
+  th, td { border: 1px solid #bbb; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #eee; }
+  code, pre { font-family: Menlo, Monaco, monospace; font-size: 12px; }
+  pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+  img { max-width: 100%; border: 1px solid #ccc; margin: 8px 0 16px; }
+  .ok { color: #0a7a2f; font-weight: 600; }
+  .pend { color: #a15c00; font-weight: 600; }
+  .note { color: #444; font-size: 13px; }
+</style>
+</head>
+<body>
+<h1>Tarea 6 — Implementación de software</h1>
+<p>
+  <strong>Estudiante / carné:</strong> 25004557 &nbsp;|&nbsp;
+  <strong>Fecha:</strong> 2026-09-14 &nbsp;|&nbsp;
+  <strong>App:</strong> TodoList (Node.js + Express + React/Vite/TypeScript)
+</p>
+
+<h2>Datos para entregar al docente</h2>
+<table>
+  <tr><th>Entregable</th><th>Dónde está</th></tr>
+  <tr><td>Repositorio Git</td><td>https://github.com/mmazariegos-2021338/todo-api (rama <code>tarea-6</code>)</td></tr>
+  <tr><td>Dockerfile + README</td><td>Raíz del repo. Guía de esta tarea: <code>docs/tarea6.md</code></td></tr>
+  <tr><td>Docker Hub v1.0 y v2.0</td><td>https://hub.docker.com/r/devmar17/25004557/tags</td></tr>
+  <tr><td>Imagen (nombre = carné)</td><td><code>devmar17/25004557:1.0</code> y <code>devmar17/25004557:2.0</code></td></tr>
+  <tr><td>App local v1 / v2</td><td>http://127.0.0.1:8080 — capturas más abajo</td></tr>
+  <tr><td>Servidor</td><td>http://134.209.65.91:25045 — usuario <code>root</code>, contenedor <code>todolist-25004557</code>, puerto <strong>25045</strong></td></tr>
+</table>
+
+<h2>Lista de evidencias (consigna 12)</h2>
+<table>
+  <tr><th>#</th><th>Pedido</th><th>Estado</th><th>Evidencia</th></tr>
+  <tr><td>5</td><td>Repo Git con código, Dockerfile y README</td><td class="ok">Listo en disco</td><td>https://github.com/mmazariegos-2021338/todo-api</td></tr>
+  <tr><td>6</td><td>Docker Hub <code>CARNET:1.0</code> y <code>:2.0</code></td><td class="ok">Publicado</td><td>https://hub.docker.com/r/devmar17/25004557/tags</td></tr>
+  <tr><td>7</td><td>App v1 local</td><td class="ok">Listo</td><td>Figura 1</td></tr>
+  <tr><td>8</td><td><code>docker images</code></td><td class="ok">Listo</td><td>Salida real más abajo</td></tr>
+  <tr><td>9</td><td>Push / repo en Hub</td><td class="ok">Listo</td><td>Figura 3</td></tr>
+  <tr><td>10</td><td>Conexión y despliegue en servidor</td><td class="ok">Hecho</td><td>SSH <code>root@134.209.65.91</code>, puerto 25045</td></tr>
+  <tr><td>11</td><td><code>docker ps</code></td><td class="ok">Hecho</td><td><code>todolist-25004557</code> <code>0.0.0.0:25045-&gt;8080/tcp</code></td></tr>
+  <tr><td>12</td><td>App v1 en servidor</td><td class="ok">Hecho</td><td>Figura 4 — http://134.209.65.91:25045</td></tr>
+  <tr><td>13</td><td>App v2 en servidor</td><td class="ok">Hecho</td><td>Figura 5</td></tr>
+  <tr><td>14</td><td>Proceso de actualización</td><td class="ok">Hecho</td><td>Recreate 1.0 → 2.0</td></tr>
+  <tr><td>15</td><td>Rollback a v1</td><td class="ok">Hecho</td><td>Recreate 2.0 → 1.0; health <code>1.0</code></td></tr>
+  <tr><td>16</td><td>Logs del contenedor</td><td class="ok">Local listo</td><td><code>TodoList v1.0/v2.0 escuchando en el puerto 8080</code></td></tr>
+</table>
+
+<h2>1. Aplicación TodoList</h2>
+<p>Tecnología: <strong>Node.js + Express</strong> (API) y <strong>React + Vite + TypeScript</strong> (interfaz en <code>frontend/</code>). El Dockerfile hace el build de Vite y Express sirve esa carpeta <code>public/</code>.</p>
+<table>
+  <tr><th>Requisito</th><th>Cómo se cubre</th></tr>
+  <tr><td>Crear tarea con ID, título, descripción, estado y fecha</td><td><code>POST /tasks</code> → 201. Estado por defecto <code>PENDIENTE</code>. <code>createdAt</code> en ISO.</td></tr>
+  <tr><td>Listar</td><td><code>GET /tasks</code></td></tr>
+  <tr><td>Actualizar título, descripción y estado</td><td><code>PUT /tasks/:id</code></td></tr>
+  <tr><td>Eliminar</td><td><code>DELETE /tasks/:id</code> → 204</td></tr>
+  <tr><td>Estados mínimos</td><td><code>PENDIENTE</code>, <code>EN PROGRESO</code>, <code>COMPLETADA</code></td></tr>
+  <tr><td>v2.0 (mejora + banner)</td><td>Filtro por estado, estadísticas y título visible <strong>TodoList v2.0</strong></td></tr>
+</table>
+<p>Configuración por variables de entorno: <code>PORT</code> (8080) y <code>APP_VERSION</code> (<code>1.0</code> / <code>2.0</code>). No hay contraseñas en el código ni en Git.</p>
+
+<h2>2. Ejecución local</h2>
+<pre>npm install
+npm install --prefix frontend
+npm test
+npm run build:ui
+APP_VERSION=1.0 npm start
+# http://127.0.0.1:8080  → TodoList v1.0 (React)
+
+# desarrollo del front:
+# APP_VERSION=2.0 npm start
+# npm run dev:ui          → http://127.0.0.1:5173</pre>
+<p>12 pruebas Jest en verde. El almacenamiento es en memoria (se reinicia al recrear el contenedor).</p>
+
+<h2>3. Construcción y prueba de la imagen</h2>
+<pre>docker build --build-arg APP_VERSION=1.0 -t devmar17/25004557:1.0 .
+docker build --build-arg APP_VERSION=2.0 -t devmar17/25004557:2.0 .
+docker images
+docker run -d --name todolist-25004557 -p 8080:8080 devmar17/25004557:1.0
+docker ps
+docker logs todolist-25004557</pre>
+
+<h3>Salida real de <code>docker images</code> (solo imágenes del carné)</h3>
+<pre>REPOSITORY           TAG    IMAGE ID       SIZE
+devmar17/25004557    2.0    5c885bba6881   248MB
+devmar17/25004557    1.0    484b926c0710   248MB</pre>
+
+<h3>Salida real de <code>docker ps</code> (local)</h3>
+<pre>NAMES                IMAGE                   STATUS                    PORTS
+todolist-25004557    devmar17/25004557:2.0   Up (healthy)              0.0.0.0:8080-&gt;8080/tcp</pre>
+
+<h3>Logs del contenedor</h3>
+<pre>TodoList v1.0 escuchando en el puerto 8080
+TodoList v2.0 escuchando en el puerto 8080</pre>
+
+<h2>4. Publicación en Docker Hub</h2>
+<pre>docker login
+docker push devmar17/25004557:1.0
+docker push devmar17/25004557:2.0</pre>
+<p>Digest <code>1.0</code>: <code>sha256:484b926c0710…</code><br/>
+Digest <code>2.0</code>: <code>sha256:5c885bba6881…</code></p>
+<p>URL: <a href="https://hub.docker.com/r/devmar17/25004557/tags">https://hub.docker.com/r/devmar17/25004557/tags</a></p>
+
+<h2>5. Implementación en el servidor (cuando exista el puerto)</h2>
+<pre>ssh root@134.209.65.91
+docker pull devmar17/25004557:1.0
+docker run -d --name todolist-25004557 -p 25045:8080 devmar17/25004557:1.0
+docker ps</pre>
+<p>URL: <a href="http://134.209.65.91:25045">http://134.209.65.91:25045</a>. Imágenes construidas para <code>linux/amd64</code> (el servidor no es ARM).</p>
+
+<h2>6. Tipo de implementación</h2>
+<ol>
+  <li><strong>¿Qué tipo realizaron?</strong> Remota, <strong>manual</strong> y con estrategia <strong>Recreate</strong>. Se construye y prueba en local, se publica en Docker Hub y se despliega por SSH con <code>docker pull</code> + <code>docker run</code>. No hay pipeline que despliegue solo.</li>
+  <li><strong>¿Diferencias local vs servidor?</strong> En local el puerto es 8080 y el host es la laptop/Colima. En el servidor hay que mapear el puerto asignado, hay latencia, se entra por SSH y el host se comparte con otros equipos. La imagen es la misma; cambia el ambiente.</li>
+  <li><strong>¿Riesgos de actualizar producción directo?</strong> Indisponibilidad (Recreate), pérdida de datos en memoria, error humano al borrar el contenedor, no se prueba en el mismo entorno y es difícil revertir si no se conservó la imagen anterior.</li>
+  <li><strong>¿Ventajas de Docker entre ambientes?</strong> La misma imagen lleva la app, Node y dependencias. Corre igual en la laptop y en el servidor: se evita “en mi máquina sí corre”.</li>
+</ol>
+
+<h2>7. Versión 2.0</h2>
+<p>Mejoras funcionales: <strong>filtro por estado</strong> y <strong>estadísticas</strong>. El título de la página es <strong>TodoList v2.0</strong>.</p>
+<pre>docker build --build-arg APP_VERSION=2.0 -t devmar17/25004557:2.0 .
+docker push devmar17/25004557:2.0</pre>
+
+<h2>9. Estrategia de despliegue: Recreate</h2>
+<p>Se detiene y elimina el contenedor actual y se levanta el nuevo. Es simple y cumple la consigna. El costo es una ventana sin servicio mientras no hay contenedor escuchando.</p>
+
+<h2>10. Actualización 1.0 → 2.0 y rollback</h2>
+<pre># Actualizar
+docker stop todolist-25004557
+docker rm todolist-25004557
+docker pull devmar17/25004557:2.0
+docker run -d --name todolist-25004557 -p 25045:8080 devmar17/25004557:2.0
+
+# Simular problema en v2 y rollback a 1.0
+docker stop todolist-25004557
+docker rm todolist-25004557
+docker run -d --name todolist-25004557 -p 25045:8080 devmar17/25004557:1.0</pre>
+<p>La imagen <code>1.0</code> se deja en Hub para poder volver atrás.</p>
+
+<h2>11. Buenas prácticas aplicadas</h2>
+<ul>
+  <li>Versiones <code>1.0</code> y <code>2.0</code>; no se usa solo <code>latest</code>.</li>
+  <li>Se prueba local (<code>npm test</code>, <code>docker run</code>) antes de publicar.</li>
+  <li>Configuración fuera del código (<code>PORT</code>, <code>APP_VERSION</code>).</li>
+  <li>Sin secretos en Git (contraseña SSH y tokens de Hub no van al repo).</li>
+  <li>Tras el despliegue se revisan <code>docker ps</code> y <code>docker logs</code>.</li>
+  <li>La versión anterior queda publicada para rollback.</li>
+  <li>Comandos y pasos documentados en este reporte y en <code>docs/tarea6.md</code>.</li>
+</ul>
+
+<h2>13. Preguntas de análisis</h2>
+<p><strong>17. ¿Qué es una implementación de software?</strong><br/>
+Es el proceso de poner una versión del software en un ambiente real (local, pruebas o producción) para que se pueda usar: empaquetar, configurar, desplegar y verificar.</p>
+<p><strong>18. ¿Qué diferencia existe entre desarrollo e implementación?</strong><br/>
+Desarrollo es construir y probar el código. Implementación es instalar o ejecutar esa versión en un ambiente destino (servidor, contenedor, nube) con su configuración y acceso de red.</p>
+<p><strong>19. ¿Qué problema resuelve Docker durante una implementación?</strong><br/>
+Empaqueta la app y sus dependencias en una imagen reproducible. Evita que cambien la versión de Node, las librerías o el sistema entre la laptop y el servidor.</p>
+<p><strong>20. ¿Por qué debemos versionar una imagen Docker?</strong><br/>
+Para saber qué corre en producción, publicar <code>2.0</code> sin borrar <code>1.0</code> y poder hacer rollback. <code>latest</code> no dice qué funcionalidad está desplegada.</p>
+<p><strong>21. ¿Qué diferencia existe entre integración continua y entrega continua?</strong><br/>
+CI: cada cambio se integra y se prueba solo (build, tests). Entrega continua: lo que pasa CI queda empaquetado y listo para desplegar (imagen versionada), pero el paso a producción puede ser manual.</p>
+<p><strong>22. ¿Qué diferencia existe entre entrega continua y despliegue continuo?</strong><br/>
+Entrega continua deja el artefacto listo; una persona decide cuándo publicarlo. Despliegue continuo lo manda a producción de forma automática si pasa las pruebas.</p>
+<p><strong>23. ¿Qué es rollback y por qué es importante?</strong><br/>
+Volver a una versión anterior que sí funcionaba (aquí, de <code>2.0</code> a <code>1.0</code>). Acorta el tiempo de falla si la nueva versión tiene un problema.</p>
+<p><strong>24. ¿Qué ventajas presenta Blue/Green?</strong><br/>
+Hay dos ambientes (azul = actual, verde = nueva). Se cambia el tráfico cuando verde está sano. El rollback es devolver el tráfico al azul, con poco o nulo downtime.</p>
+<p><strong>25. ¿Qué ventajas presenta Canary?</strong><br/>
+Se expone la nueva versión solo a una fracción de usuarios. Si hay error, el impacto es limitado; se puede ampliar o revertir con evidencia real.</p>
+<p><strong>26. ¿Por qué no es recomendable modificar manualmente producción?</strong><br/>
+No queda un registro reproducible, es fácil romper algo, no se puede repetir el mismo cambio en otro ambiente y el rollback se vuelve adivinanza.</p>
+<p><strong>27. ¿Qué información debe verificarse después de un despliegue?</strong><br/>
+Que el contenedor esté <code>Up</code> (<code>docker ps</code>), que los logs no muestren error (<code>docker logs</code>), que <code>/health</code> responda, que la UI cargue en <code>http://IP:PUERTO</code> y que el CRUD básico funcione.</p>
+
+<h2>Figuras</h2>
+<p><strong>Figura 1.</strong> TodoList v1.0 en local (<code>http://127.0.0.1:8080</code>).</p>
+<img src="local-v1.png" alt="TodoList v1.0 local"/>
+<p><strong>Figura 2.</strong> TodoList v2.0 en local: estadísticas, filtro por estado y banner v2.0.</p>
+<img src="local-v2.png" alt="TodoList v2.0 local"/>
+<p><strong>Figura 3.</strong> Docker Hub con tags <code>1.0</code> y <code>2.0</code> del repositorio <code>devmar17/25004557</code>.</p>
+<img src="docker-hub-tags.png" alt="Docker Hub tags 1.0 y 2.0"/>
+<p><strong>Figura 4.</strong> TodoList v1.0 en el servidor (<code>http://134.209.65.91:25045</code>).</p>
+<img src="server-v1.png" alt="TodoList v1.0 en el servidor"/>
+<p><strong>Figura 5.</strong> TodoList v2.0 en el servidor: estadísticas y filtro por estado.</p>
+<img src="server-v2.png" alt="TodoList v2.0 en el servidor"/>
+
+<h2>Uso de IA (apoyo, no reemplazo)</h2>
+<p>Se usó un asistente para armar el Dockerfile, la UI, el README y estas respuestas. El código se revisó, se probaron 12 tests y se construyeron/publicaron las imágenes a mano. Las credenciales del servidor no se guardaron en Git.</p>
+
+<p class="note">Puerto 25045 elegido porque estaba libre en el servidor compartido. Tras el rollback la URL quedó en v1.0; v2.0 se demostró y quedó capturada.</p>
+</body>
+</html>

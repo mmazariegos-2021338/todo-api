@@ -1,0 +1,34 @@
+Servidor: 134.209.65.91
+Usuario SSH: root
+Puerto elegido: 25045  (libre; derivado del carné 25004557)
+Contenedor: todolist-25004557
+URL: http://134.209.65.91:25045
+
+Imágenes (linux/amd64, publicadas en Docker Hub):
+  devmar17/25004557:1.0
+  devmar17/25004557:2.0
+
+Estrategia: Recreate
+
+1) Despliegue v1
+   docker pull --platform linux/amd64 devmar17/25004557:1.0
+   docker run -d --name todolist-25004557 -p 25045:8080 --platform linux/amd64 devmar17/25004557:1.0
+   docker ps / docker logs
+   health: {"status":"ok","version":"1.0"}
+   log: TodoList v1.0 escuchando en el puerto 8080
+
+2) Actualización a v2
+   docker stop todolist-25004557
+   docker rm todolist-25004557
+   docker run -d --name todolist-25004557 -p 25045:8080 --platform linux/amd64 devmar17/25004557:2.0
+   health: {"status":"ok","version":"2.0"}
+   log: TodoList v2.0 escuchando en el puerto 8080
+
+3) Rollback a v1 (simular problema en v2)
+   docker stop todolist-25004557
+   docker rm todolist-25004557
+   docker run -d --name todolist-25004557 -p 25045:8080 --platform linux/amd64 devmar17/25004557:1.0
+   health: {"status":"ok","version":"1.0"}
+   log: TodoList v1.0 escuchando en el puerto 8080
+
+Estado al cerrar la evidencia: v1.0 en el puerto 25045.

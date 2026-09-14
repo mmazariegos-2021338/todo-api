@@ -1,0 +1,3 @@
+NAMES                IMAGE                   STATUS                            PORTS
+todolist-25004557    devmar17/25004557:1.0   Up 2 seconds (health: starting)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+sonarqube-todo-api   sonarqube:community     Up 23 minutes                     0.0.0.0:9000->9000/tcp, [::]:9000->9000/tcp

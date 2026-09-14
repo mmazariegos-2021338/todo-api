@@ -1,4 +1,7 @@
 node_modules
+frontend/node_modules
+frontend/dist
+public
 npm-debug.log
 coverage
 .git
@@ -7,3 +10,5 @@ coverage
 *.test.js
 .sonar
 README.md
+docs
+results

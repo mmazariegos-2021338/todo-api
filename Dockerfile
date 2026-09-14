@@ -1,5 +1,12 @@
 # Imagen base ligera y con soporte activo (reduce superficie de vulnerabilidades
 # frente a una imagen "full" de node).
+FROM node:22-alpine AS ui
+WORKDIR /ui
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend ./
+RUN npm run build
+
 FROM node:22-alpine
 
 # Directorio de trabajo dentro del contenedor.
@@ -17,13 +24,16 @@ COPY package*.json ./
 RUN npm install --omit=dev && npm cache clean --force \
   && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn*
 
-# Copiamos el resto del código fuente.
+# API + build de React (Vite).
 COPY src ./src
+COPY --from=ui /ui/dist ./public
 
 # La imagen node:alpine ya trae el usuario "node" (uid 1000) sin privilegios;
 # lo usamos en vez de root dentro del contenedor por buenas prácticas de seguridad.
 USER node
 
+ARG APP_VERSION=1.0
+ENV APP_VERSION=$APP_VERSION
 ENV PORT=8080
 EXPOSE 8080
 

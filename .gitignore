@@ -1,4 +1,6 @@
 node_modules/
+frontend/dist/
+public/
 coverage/
 .sonar/
 *.log

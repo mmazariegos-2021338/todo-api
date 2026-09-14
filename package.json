@@ -5,6 +5,8 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
+    "dev:ui": "npm run dev --prefix frontend",
+    "build:ui": "npm run build --prefix frontend && rm -rf public && mkdir -p public && cp -r frontend/dist/. public/",
     "test": "jest --coverage",
     "lint": "eslint src"
   },

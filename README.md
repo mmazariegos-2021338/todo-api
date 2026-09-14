@@ -1,6 +1,8 @@
 # todo-api
 
-API REST de tareas (To-Do) en **Node.js + Express**. Pasa por un flujo DevSecOps básico: pruebas, **SonarQube**, imagen **Docker**, escaneo **Trivy** y publicación en **Docker Hub**.
+API REST + interfaz **TodoList** en **Node.js + Express** y **React (Vite + TypeScript)**. Pasa por un flujo DevSecOps básico: pruebas, **SonarQube**, imagen **Docker**, escaneo **Trivy**, **JMeter** y **implementación** (Tarea 6).
+
+**Tarea 6 — Implementación:** imágenes `devmar17/25004557:1.0` y `:2.0`. Guía, comandos, estrategia Recreate, rollback y preguntas: [`docs/tarea6.md`](docs/tarea6.md).
 
 **Tarea Unidad 4 — Trivy, Sonar, Docker** (individual). La IA se usó como apoyo; el código y las evidencias se revisaron y se pueden explicar.
 
@@ -77,12 +79,16 @@ API REST de tareas con operaciones CRUD completas:
 
 | Método | Ruta          | Descripción                                  |
 |--------|---------------|-----------------------------------------------|
-| GET    | `/health`     | Verifica que el servicio está vivo             |
-| GET    | `/tasks`      | Lista todas las tareas                         |
-| GET    | `/tasks/:id`  | Obtiene una tarea por id                       |
-| POST   | `/tasks`      | Crea una tarea (`title` requerido, `description` opcional) |
-| PUT    | `/tasks/:id`  | Actualiza título, descripción y/o `completed`  |
-| DELETE | `/tasks/:id`  | Elimina una tarea                              |
+| GET    | `/`               | App React (TodoList v1.0 o v2.0 según `APP_VERSION`) |
+| GET    | `/health`         | Servicio vivo + `version` |
+| GET    | `/tasks`          | Lista tareas; `?status=` filtra (v2) |
+| GET    | `/tasks/stats`    | Conteos por estado (v2) |
+| GET    | `/tasks/:id`      | Una tarea por id |
+| POST   | `/tasks`          | Crea (`title` obligatorio; `description` y `status` opcionales) |
+| PUT    | `/tasks/:id`      | Actualiza título, descripción y/o estado |
+| DELETE | `/tasks/:id`      | Elimina una tarea |
+
+Estados: **PENDIENTE**, **EN PROGRESO**, **COMPLETADA**. Variables: `PORT` (default 8080), `APP_VERSION` (`1.0` / `2.0`).
 
 El almacenamiento es en memoria (se reinicia al reiniciar el proceso); es suficiente para esta actividad, que se enfoca en el flujo de calidad/seguridad, no en persistencia.
 
@@ -93,7 +99,9 @@ Requiere Node.js 20+.
 ```bash
 npm install
 npm test          # corre la suite de pruebas (jest + supertest) con cobertura
-npm start         # levanta el servidor en http://localhost:8080
+APP_VERSION=1.0 npm start   # API en http://127.0.0.1:8080
+npm run dev:ui              # React (Vite) en http://127.0.0.1:5173
+npm run build:ui            # genera public/ para servirla con Express/Docker
 ```
 
 Prueba rápida:
@@ -107,8 +115,16 @@ curl http://localhost:8080/tasks
 ## 3. Ejecutar con Docker
 
 ```bash
-docker build -t devmar17/todo-api:1.0 .
-docker run --rm -p 8080:8080 devmar17/todo-api:1.0
+docker build --build-arg APP_VERSION=1.0 -t devmar17/25004557:1.0 .
+docker run --rm -p 8080:8080 -e APP_VERSION=1.0 devmar17/25004557:1.0
+```
+
+Tarea 6 (carnet como nombre de imagen):
+
+```bash
+docker build --build-arg APP_VERSION=2.0 -t devmar17/25004557:2.0 .
+docker push devmar17/25004557:1.0
+docker push devmar17/25004557:2.0
 ```
 
 Verificar que el contenedor responde:
@@ -258,10 +274,21 @@ jmeter -n -t todo-api-carga.jmx -l ../results/carga-ligera/carga.jtl -Jthreads=5
 
 Resultado 2026-09-08: funcional **7/7, 0% error**. Carga 5/20/50 usuarios: **0% error**, p95 **16 / 67 / 141 ms** (criterio &lt; 1 s). GET `/tasks` es el más lento. Detalle y prompts de IA en el PDF.
 
-## 10. Estructura del proyecto
+## 10. Tarea 6 — Implementación, v2.0 y rollback
+
+Documentación completa (tipo de despliegue, Recreate, rollback, preguntas 17–27): [`docs/tarea6.md`](docs/tarea6.md).
+
+Imágenes: `devmar17/25004557:1.0` y `devmar17/25004557:2.0`.  
+Contenedor en servidor: `todolist-25004557`.  
+Front: **React + Vite + TypeScript**. v2.0 agrega filtro por estado, estadísticas y el banner **TodoList v2.0**.  
+Reporte: [`docs/tarea6/reporte-tarea6.pdf`](docs/tarea6/reporte-tarea6.pdf).
+
+## 11. Estructura del proyecto
 
 ```
 todo-api/
+├── frontend/           # React + Vite + TypeScript
+├── public/             # build de React (se genera; no se versiona)
 ├── src/
 │   ├── app.js          # rutas Express (endpoints CRUD)
 │   ├── server.js       # arranque del servidor HTTP
@@ -283,5 +310,6 @@ todo-api/
 │   ├── todo-api-funcional.jmx
 │   ├── todo-api-carga.jmx
 │   └── tareas.csv
-└── docs/tarea5/          # PDF, capturas y métricas de JMeter
+├── docs/tarea5/          # PDF, capturas y métricas de JMeter
+└── docs/tarea6.md        # implementación, rollback y preguntas
 ```
