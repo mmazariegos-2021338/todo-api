@@ -1,0 +1,18 @@
+root@servidor:~# docker stop todolist-25004557
+todolist-25004557
+
+root@servidor:~# docker rm todolist-25004557
+todolist-25004557
+
+root@servidor:~# docker run -d --name todolist-25004557 -p 25045:8080 --platform linux/amd64 devmar17/25004557:1.0
+bee5bda403e7be8e047cbe7352e7f40ea097431ff040e0ded3c0430b665ed399
+
+root@servidor:~# docker ps --filter name=todolist-25004557
+NAMES               IMAGE                   PORTS                                           STATUS
+todolist-25004557   devmar17/25004557:1.0   0.0.0.0:25045->8080/tcp, [::]:25045->8080/tcp   Up (healthy)
+
+root@servidor:~# docker logs todolist-25004557
+TodoList v1.0 escuchando en el puerto 8080
+
+root@servidor:~# curl -sS http://127.0.0.1:25045/health
+{"status":"ok","version":"1.0"}

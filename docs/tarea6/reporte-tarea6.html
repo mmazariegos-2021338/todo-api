@@ -192,6 +192,22 @@ Que el contenedor esté <code>Up</code> (<code>docker ps</code>), que los logs n
 <p><strong>Figura 5.</strong> TodoList v2.0 en el servidor: estadísticas y filtro por estado.</p>
 <img src="server-v2.png" alt="TodoList v2.0 en el servidor"/>
 
+<h2>Capturas de terminal (como el ejemplo del PDF)</h2>
+<p><strong>Figura 6.</strong> <code>docker images</code> — imágenes <code>devmar17/25004557:1.0</code> y <code>:2.0</code>.</p>
+<img src="captura-docker-images.png" alt="docker images"/>
+<p><strong>Figura 7.</strong> <code>docker push devmar17/25004557:1.0</code>.</p>
+<img src="captura-docker-push.png" alt="docker push"/>
+<p><strong>Figura 8.</strong> Conexión SSH y despliegue de v1.0 en el servidor (<code>134.209.65.91:25045</code>).</p>
+<img src="captura-ssh-despliegue.png" alt="ssh despliegue"/>
+<p><strong>Figura 9.</strong> <code>docker ps</code> en el servidor.</p>
+<img src="captura-docker-ps-server.png" alt="docker ps servidor"/>
+<p><strong>Figura 10.</strong> <code>docker logs</code> y health check.</p>
+<img src="captura-docker-logs.png" alt="docker logs"/>
+<p><strong>Figura 11.</strong> Actualización Recreate de 1.0 → 2.0.</p>
+<img src="captura-actualizacion.png" alt="actualizacion v2"/>
+<p><strong>Figura 12.</strong> Rollback de 2.0 → 1.0.</p>
+<img src="captura-rollback.png" alt="rollback v1"/>
+
 <h2>Uso de IA (apoyo, no reemplazo)</h2>
 <p>Se usó un asistente para armar el Dockerfile, la UI, el README y estas respuestas. El código se revisó, se probaron 12 tests y se construyeron/publicaron las imágenes a mano. Las credenciales del servidor no se guardaron en Git.</p>
 

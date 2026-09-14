@@ -1,0 +1,3 @@
+root@servidor:~# docker ps --filter name=todolist-25004557
+NAMES               IMAGE                   PORTS                                           STATUS
+todolist-25004557   devmar17/25004557:1.0   0.0.0.0:25045->8080/tcp, [::]:25045->8080/tcp   Up 5 minutes (healthy)

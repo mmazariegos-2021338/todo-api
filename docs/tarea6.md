@@ -27,6 +27,13 @@ Reporte para entregar: [`reporte-tarea6.pdf`](tarea6/reporte-tarea6.pdf) · [`re
 | [`server-v1.png`](server-v1.png) | TodoList v1.0 en el servidor |
 | [`server-v2.png`](server-v2.png) | TodoList v2.0 en el servidor (filtro + stats) |
 | [`server-despliegue.txt`](server-despliegue.txt) | Comandos Recreate, update y rollback |
+| [`captura-docker-images.png`](captura-docker-images.png) | Terminal: `docker images` |
+| [`captura-docker-push.png`](captura-docker-push.png) | Terminal: `docker push` |
+| [`captura-ssh-despliegue.png`](captura-ssh-despliegue.png) | Terminal: SSH + despliegue v1 |
+| [`captura-docker-ps-server.png`](captura-docker-ps-server.png) | Terminal: `docker ps` en servidor |
+| [`captura-docker-logs.png`](captura-docker-logs.png) | Terminal: `docker logs` |
+| [`captura-actualizacion.png`](captura-actualizacion.png) | Terminal: update 1.0 → 2.0 |
+| [`captura-rollback.png`](captura-rollback.png) | Terminal: rollback 2.0 → 1.0 |
 
 ## 1. Qué se implementó
 

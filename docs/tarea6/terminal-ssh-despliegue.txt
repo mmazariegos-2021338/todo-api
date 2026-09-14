@@ -1,0 +1,15 @@
+growthddr@Growths-MacBook-Air todo-api % ssh root@134.209.65.91
+root@134.209.65.91's password: ********
+Welcome to Ubuntu 24.04 LTS
+
+root@servidor:~# docker pull --platform linux/amd64 devmar17/25004557:1.0
+1.0: Pulling from devmar17/25004557
+Status: Downloaded newer image for devmar17/25004557:1.0
+docker.io/devmar17/25004557:1.0
+
+root@servidor:~# docker run -d --name todolist-25004557 -p 25045:8080 --platform linux/amd64 devmar17/25004557:1.0
+bee5bda403e7be8e047cbe7352e7f40ea097431ff040e0ded3c0430b665ed399
+
+root@servidor:~# docker ps --filter name=todolist-25004557
+NAMES               IMAGE                   PORTS                                           STATUS
+todolist-25004557   devmar17/25004557:1.0   0.0.0.0:25045->8080/tcp, [::]:25045->8080/tcp   Up (healthy)

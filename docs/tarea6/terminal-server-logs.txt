@@ -1,0 +1,5 @@
+root@servidor:~# docker logs todolist-25004557
+TodoList v1.0 escuchando en el puerto 8080
+
+root@servidor:~# curl -sS http://127.0.0.1:25045/health
+{"status":"ok","version":"1.0"}

@@ -1,0 +1,106 @@
+The push refers to repository [docker.io/devmar17/25004557]
+676a286f4c79: Waiting
+16da5a640377: Waiting
+69deffadb71d: Waiting
+fc7e60b46271: Waiting
+46619ec65f79: Waiting
+efbef6f9e333: Waiting
+a2980c1fee17: Waiting
+136a57c37d4b: Waiting
+d66193897c7d: Waiting
+2b129b423a01: Waiting
+55afa1ecc21d: Waiting
+136a57c37d4b: Waiting
+d66193897c7d: Waiting
+2b129b423a01: Waiting
+55afa1ecc21d: Waiting
+676a286f4c79: Waiting
+16da5a640377: Waiting
+69deffadb71d: Waiting
+fc7e60b46271: Waiting
+46619ec65f79: Waiting
+efbef6f9e333: Waiting
+a2980c1fee17: Waiting
+55afa1ecc21d: Waiting
+676a286f4c79: Waiting
+16da5a640377: Waiting
+69deffadb71d: Waiting
+fc7e60b46271: Waiting
+46619ec65f79: Waiting
+efbef6f9e333: Waiting
+a2980c1fee17: Waiting
+136a57c37d4b: Waiting
+d66193897c7d: Waiting
+2b129b423a01: Waiting
+16da5a640377: Waiting
+69deffadb71d: Waiting
+fc7e60b46271: Waiting
+46619ec65f79: Waiting
+efbef6f9e333: Waiting
+a2980c1fee17: Waiting
+136a57c37d4b: Waiting
+d66193897c7d: Waiting
+2b129b423a01: Waiting
+55afa1ecc21d: Waiting
+676a286f4c79: Waiting
+a2980c1fee17: Waiting
+136a57c37d4b: Waiting
+d66193897c7d: Waiting
+2b129b423a01: Waiting
+55afa1ecc21d: Waiting
+676a286f4c79: Waiting
+16da5a640377: Waiting
+69deffadb71d: Waiting
+fc7e60b46271: Waiting
+46619ec65f79: Waiting
+efbef6f9e333: Waiting
+676a286f4c79: Waiting
+16da5a640377: Waiting
+69deffadb71d: Waiting
+fc7e60b46271: Waiting
+46619ec65f79: Waiting
+efbef6f9e333: Waiting
+a2980c1fee17: Waiting
+136a57c37d4b: Waiting
+d66193897c7d: Waiting
+2b129b423a01: Waiting
+55afa1ecc21d: Waiting
+55afa1ecc21d: Waiting
+676a286f4c79: Waiting
+16da5a640377: Waiting
+69deffadb71d: Waiting
+fc7e60b46271: Waiting
+46619ec65f79: Waiting
+efbef6f9e333: Waiting
+a2980c1fee17: Waiting
+136a57c37d4b: Waiting
+d66193897c7d: Waiting
+2b129b423a01: Waiting
+69deffadb71d: Waiting
+fc7e60b46271: Waiting
+46619ec65f79: Waiting
+efbef6f9e333: Waiting
+a2980c1fee17: Waiting
+136a57c37d4b: Waiting
+d66193897c7d: Layer already exists
+2b129b423a01: Waiting
+55afa1ecc21d: Waiting
+676a286f4c79: Layer already exists
+16da5a640377: Waiting
+16da5a640377: Waiting
+69deffadb71d: Waiting
+fc7e60b46271: Layer already exists
+46619ec65f79: Waiting
+efbef6f9e333: Layer already exists
+a2980c1fee17: Waiting
+136a57c37d4b: Waiting
+2b129b423a01: Waiting
+55afa1ecc21d: Waiting
+136a57c37d4b: Already exists
+2b129b423a01: Layer already exists
+55afa1ecc21d: Layer already exists
+16da5a640377: Layer already exists
+69deffadb71d: Layer already exists
+46619ec65f79: Layer already exists
+a2980c1fee17: Layer already exists
+1.0: digest: sha256:737335c083d2826341eda54b7348baebc959598ce3140d19a513d16d07d90148 size: 856
